@@ -3,6 +3,7 @@ package com.auction.app.controlers;
 
 import com.auction.app.entities.User;
 import com.auction.app.repositories.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class RegistrationController {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
-    public RegistrationController(UserRepository userRepository) {
+    public RegistrationController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
 
     }
 
@@ -38,7 +41,9 @@ public class RegistrationController {
 
         User newUser = new User();
         newUser.setEmail(dao.getEmail());
-        newUser.setPassword(dao.getPassword());
+
+        String Hash = passwordEncoder.encode(dao.getPassword());
+        newUser.setPassword(Hash);
         newUser.setName(dao.getName());
         newUser.setLastName(dao.getLastName());
         newUser.setBalance(0.0);

@@ -12,6 +12,8 @@ CREATE ROLE "Admin" WITH
 	CREATEROLE
 	LOGIN
     PASSWORD 'admin';
+CREATE ROLE "User" WITH
+    LOGIN
 
 
 -- ddl-end --
