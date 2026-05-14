@@ -1,0 +1,13 @@
+<form th:action="@{/login}" method="post">
+  <div class="mb-3">
+    <label>Email</label>
+    <!-- Spring looks for the 'username' name attribute -->
+    <input type="email" name="username" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label>Password</label>
+    <!-- Spring looks for the 'password' name attribute -->
+    <input type="password" name="password" class="form-control" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Login</button>
+</form>

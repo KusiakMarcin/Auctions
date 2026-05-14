@@ -29,8 +29,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.get().getEmail())
-                .password(user.getPassword()) // This must be hashed in the DB!
-                .roles(user.getRole()) // e.g., "USER" or "ADMIN"
+                .password(user.get().getPassword()) // This must be hashed in the DB!
+                .roles(user.get().getRole().toString()) // e.g., "USER" or "ADMIN"
                 .build();
     }
 }

@@ -12,8 +12,7 @@ CREATE ROLE "Admin" WITH
 	CREATEROLE
 	LOGIN
     PASSWORD 'admin';
-CREATE ROLE "User" WITH
-    LOGIN
+
 
 
 -- ddl-end --
@@ -37,13 +36,18 @@ ALTER TYPE public.user_role OWNER TO "Admin";
 
 -- object: public."Aucitons" | type: TABLE --
 -- DROP TABLE IF EXISTS public."Aucitons" CASCADE;
-CREATE TABLE public."Aucitons" (
+CREATE TABLE public.Auctions (
                                    "Auction_ID" serial NOT NULL,
+                                   "Title" varchar(100),
                                    "Payment_ID_Payments" integer,
+                                   "User_ID_Users" integer,
+                                   "Starting_Bid" decimal(10,2),
+                                   "Expiration_date" timestamp,
+                                   "Current_Highest_Bid" decimal(10,2),
                                    CONSTRAINT "Aucitons_pk" PRIMARY KEY ("Auction_ID")
 );
 -- ddl-end --
-ALTER TABLE public."Aucitons" OWNER TO "Admin";
+ALTER TABLE public.Auctions OWNER TO "Admin";
 -- ddl-end --
 
 -- object: public."Bids" | type: TABLE --
@@ -51,6 +55,7 @@ ALTER TABLE public."Aucitons" OWNER TO "Admin";
 CREATE TABLE public."Bids" (
                                "Bid_ID" serial NOT NULL,
                                "User_ID_Users" integer,
+                               "Bid_Value" DECIMAL(10,2),
                                CONSTRAINT "Bids_pk" PRIMARY KEY ("Bid_ID")
 );
 -- ddl-end --
@@ -64,7 +69,7 @@ CREATE TABLE public."Payments" (
                                    CONSTRAINT "Payments_pk" PRIMARY KEY ("Payment_ID")
 );
 -- ddl-end --
-ALTER TABLE public."Payments" OWNER TO postgres;
+ALTER TABLE public."Payments" OWNER TO "Admin";
 -- ddl-end --
 
 -- object: public."Users" | type: TABLE --
@@ -76,7 +81,7 @@ CREATE TABLE public."Users" (
                                 "Name" varchar(50),
                                 "Last_Name" varchar(50),
                                 "Email" varchar(50),
-                                "Password" varchar(50),
+                                "Password" varchar(255),
                                 CONSTRAINT "Users_pk" PRIMARY KEY ("User_ID")
 );
 -- ddl-end --
@@ -88,6 +93,7 @@ ALTER TABLE public."Users" OWNER TO "Admin";
 CREATE TABLE public."Bids_Auction" (
                                        "Bid_ID_Bids" integer NOT NULL,
                                        "Auction_ID_Aucitons" integer NOT NULL,
+
                                        CONSTRAINT "Bids_Auction_pk" PRIMARY KEY ("Bid_ID_Bids","Auction_ID_Aucitons")
 );
 -- ddl-end --
@@ -102,7 +108,7 @@ ALTER TABLE public."Bids_Auction" ADD CONSTRAINT "Bids_fk" FOREIGN KEY ("Bid_ID_
 -- object: "Aucitons_fk" | type: CONSTRAINT --
 -- ALTER TABLE public."Bids_Auction" DROP CONSTRAINT IF EXISTS "Aucitons_fk" CASCADE;
 ALTER TABLE public."Bids_Auction" ADD CONSTRAINT "Aucitons_fk" FOREIGN KEY ("Auction_ID_Aucitons")
-    REFERENCES public."Aucitons" ("Auction_ID") MATCH FULL
+    REFERENCES public.Auctions ("Auction_ID") MATCH FULL
     ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
@@ -115,21 +121,23 @@ ALTER TABLE public."Bids" ADD CONSTRAINT "Users_fk" FOREIGN KEY ("User_ID_Users"
 
 -- object: "Payments_fk" | type: CONSTRAINT --
 -- ALTER TABLE public."Aucitons" DROP CONSTRAINT IF EXISTS "Payments_fk" CASCADE;
-ALTER TABLE public."Aucitons" ADD CONSTRAINT "Payments_fk" FOREIGN KEY ("Payment_ID_Payments")
+ALTER TABLE public.Auctions ADD CONSTRAINT "Payments_fk" FOREIGN KEY ("Payment_ID_Payments")
     REFERENCES public."Payments" ("Payment_ID") MATCH FULL
+    ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE public.Auctions ADD CONSTRAINT "User_fk" FOREIGN KEY ("User_ID_Users")
+    REFERENCES public."Users" ("User_ID") MATCH FULL
     ON DELETE SET NULL ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: "Aucitons_uq" | type: CONSTRAINT --
 -- ALTER TABLE public."Aucitons" DROP CONSTRAINT IF EXISTS "Aucitons_uq" CASCADE;
-ALTER TABLE public."Aucitons" ADD CONSTRAINT "Aucitons_uq" UNIQUE ("Payment_ID_Payments");
+ALTER TABLE public.Auctions ADD CONSTRAINT "Aucitons_uq" UNIQUE ("Payment_ID_Payments");
 -- ddl-end --
 
 -- object: "Auction_User" | type: CONSTRAINT --
 -- ALTER TABLE public."Aucitons" DROP CONSTRAINT IF EXISTS "Auction_User" CASCADE;
-ALTER TABLE public."Aucitons" ADD CONSTRAINT "Auction_User" FOREIGN KEY ("Auction_ID")
-    REFERENCES public."Users" ("User_ID") MATCH SIMPLE
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
 -- ddl-end --
 
 -- object: "User_Payment" | type: CONSTRAINT --

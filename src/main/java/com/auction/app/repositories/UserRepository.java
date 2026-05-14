@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
 import com.auction.app.entities.User;
 
@@ -13,7 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UserRepository {
+public class UserRepository
+{
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -37,7 +40,7 @@ public class UserRepository {
 
 
     public Optional<User> findByEmail(String email) {
-        String sql = "SELECT * FROM users WHERE email = ?";
+        String sql = "SELECT * FROM \"Users\" WHERE \"Email\" = ?";
 
         try {
             User user = jdbcTemplate.queryForObject(sql, userRowMapper, email);
@@ -59,7 +62,14 @@ public class UserRepository {
         user.setName(rs.getString("Name"));
         user.setLastName(rs.getString("Last_Name"));
         user.setBalance(rs.getDouble("Saldo"));
-        user.setRole(rs.getString("Role"));
+        user.setRole(Role.valueOf(rs.getString("Role")));
         return user;
     };
+
+    public Long getUserID() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = findByEmail(auth.getName()).
+                orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getId();
+    }
 }

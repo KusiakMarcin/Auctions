@@ -22,8 +22,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login") // Use your custom login page
-                        .defaultSuccessUrl("/auctions", true)
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/profile", true)
                         .permitAll()
                 )
                 .logout(logout -> logout.permitAll());
