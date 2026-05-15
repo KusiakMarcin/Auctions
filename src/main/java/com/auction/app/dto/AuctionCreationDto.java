@@ -1,4 +1,4 @@
-package com.auction.app.dao;
+package com.auction.app.dto;
 
 
 import lombok.Getter;
@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 

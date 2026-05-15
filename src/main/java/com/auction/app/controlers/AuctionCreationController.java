@@ -1,13 +1,9 @@
 package com.auction.app.controlers;
 
 
-import com.auction.app.dao.AuctionCreationDto;
-import com.auction.app.dao.UserRegistrationDto;
-import com.auction.app.entities.User;
+import com.auction.app.dto.AuctionCreationDto;
 import com.auction.app.repositories.AuctionRepository;
 import com.auction.app.repositories.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;

@@ -55,6 +55,7 @@ ALTER TABLE public.Auctions OWNER TO "Admin";
 CREATE TABLE public."Bids" (
                                "Bid_ID" serial NOT NULL,
                                "User_ID_Users" integer,
+                               "Auction_ID_Auction" integer,
                                "Bid_Value" DECIMAL(10,2),
                                CONSTRAINT "Bids_pk" PRIMARY KEY ("Bid_ID")
 );
@@ -88,34 +89,16 @@ CREATE TABLE public."Users" (
 ALTER TABLE public."Users" OWNER TO "Admin";
 -- ddl-end --
 
--- object: public."Bids_Auction" | type: TABLE --
--- DROP TABLE IF EXISTS public."Bids_Auction" CASCADE;
-CREATE TABLE public."Bids_Auction" (
-                                       "Bid_ID_Bids" integer NOT NULL,
-                                       "Auction_ID_Aucitons" integer NOT NULL,
 
-                                       CONSTRAINT "Bids_Auction_pk" PRIMARY KEY ("Bid_ID_Bids","Auction_ID_Aucitons")
-);
--- ddl-end --
-
--- object: "Bids_fk" | type: CONSTRAINT --
--- ALTER TABLE public."Bids_Auction" DROP CONSTRAINT IF EXISTS "Bids_fk" CASCADE;
-ALTER TABLE public."Bids_Auction" ADD CONSTRAINT "Bids_fk" FOREIGN KEY ("Bid_ID_Bids")
-    REFERENCES public."Bids" ("Bid_ID") MATCH FULL
-    ON DELETE RESTRICT ON UPDATE CASCADE;
--- ddl-end --
-
--- object: "Aucitons_fk" | type: CONSTRAINT --
--- ALTER TABLE public."Bids_Auction" DROP CONSTRAINT IF EXISTS "Aucitons_fk" CASCADE;
-ALTER TABLE public."Bids_Auction" ADD CONSTRAINT "Aucitons_fk" FOREIGN KEY ("Auction_ID_Aucitons")
-    REFERENCES public.Auctions ("Auction_ID") MATCH FULL
-    ON DELETE RESTRICT ON UPDATE CASCADE;
--- ddl-end --
 
 -- object: "Users_fk" | type: CONSTRAINT --
 -- ALTER TABLE public."Bids" DROP CONSTRAINT IF EXISTS "Users_fk" CASCADE;
 ALTER TABLE public."Bids" ADD CONSTRAINT "Users_fk" FOREIGN KEY ("User_ID_Users")
     REFERENCES public."Users" ("User_ID") MATCH FULL
+    ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE public."Bids" ADD CONSTRAINT "Auction_fk" FOREIGN KEY ("Auction_ID_Auction")
+    REFERENCES public.Auctions ("Auction_ID") MATCH FULL
     ON DELETE SET NULL ON UPDATE CASCADE;
 -- ddl-end --
 

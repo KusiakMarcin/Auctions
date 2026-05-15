@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Auction Details</title>
+  <!-- 1. BOOTSTRAP CSS (Hides the modal and styles the page) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<!-- Added 'container mt-4' so the page isn't pushed against the edge of the screen -->
+<body class="container mt-4">
+
+<!-- Timer Card -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-body text-center">
+    <h5>Time Remaining</h5>
+    <h2 id="countdown" class="text-danger">--:--:--</h2>
+  </div>
+</div>
+
+<div class="row">
+  <!-- Left Column -->
+  <div class="col-md-8">
+    <h1 th:text="${auction.title}">Item Name</h1>
+    <hr>
+    <h3>Current Highest Bid:
+      <span class="text-success" th:text="${#numbers.formatCurrency(highestBid)}">$0.00</span>
+    </h3>
+  </div> <!-- 2. FIXED: This closing div was missing! -->
+
+  <!-- Right Column -->
+  <div class="col-md-4">
+    <!-- Button to trigger modal -->
+    <button type="button" class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#bidModal">
+      Place a Bid
+    </button>
+
+    <h4>Bid History</h4>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Bid</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- Make sure bid.userEmail and bid.amount match your Java fields! -->
+      <tr th:each="bid : ${bidHistory}">
+
+        <td th:text="${#numbers.formatCurrency(bid.bidValue)}">$100</td>
+      </tr>
+      <tr th:if="${bidHistory.isEmpty()}">
+        <td colspan="2" class="text-center text-muted">No bids yet. Be the first!</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="bidModal" tabindex="-1" aria-labelledby="bidModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="bidModalLabel">Confirm Your Bid</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <!-- 3. FIXED: Changed auction.auctionID to auction.id -->
+      <form th:action="@{/auctions/{id}/bid(id=${auction.auctionID})}" method="post">
+        <div class="modal-body">
+          <p>You are about to bid on: <strong th:text="${auction.title}">Item</strong></p>
+          <div class="mb-3">
+            <label for="bidAmount" class="form-label">Enter Bid Amount</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input type="number" step="0.01" class="form-control" name="bidValue" id="bidAmount" required>
+            </div>
+            <small class="text-muted">Must be higher than <span th:text="${#numbers.formatCurrency(highestBid)}"></span></small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success">Confirm and Place Bid</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Timer Script -->
+<script th:inline="javascript">
+  const endTime = [[${endTime}]];
+
+  function updateTimer() {
+      const now = new Date().getTime();
+      const distance = endTime - now;
+
+      if (distance < 0) {
+          document.getElementById("countdown").innerHTML = "EXPIRED";
+          return;
+      }
+
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("countdown").innerHTML = hours + "h " + minutes + "m " + seconds + "s ";
+  }
+
+  setInterval(updateTimer, 1000);
+  updateTimer();
+</script>
+
+<!-- 4. BOOTSTRAP JS (This makes the popup actually pop up when clicked) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

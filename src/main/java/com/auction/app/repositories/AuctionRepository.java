@@ -1,17 +1,17 @@
 package com.auction.app.repositories;
 
 
-import com.auction.app.dao.AuctionCreationDto;
+import com.auction.app.dto.AuctionCreationDto;
 import com.auction.app.entities.Auction;
-import com.auction.app.entities.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import com.auction.app.entities.User;
+import tools.jackson.databind.ext.jdk8.OptionalIntDeserializer;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 
 @Repository
 public class AuctionRepository
@@ -37,5 +37,29 @@ public class AuctionRepository
 
     }
 
+    private final RowMapper<Auction> AuctionRowMapper = (rs, rowNum) -> {
+        Auction auction = new Auction();
+        auction.setAuctionID(rs.getLong("Auction_ID"));
+        auction.setTitle(rs.getString("Title"));
+        auction.setPaymentID(rs.getLong("Payment_ID_Payments"));
+        auction.setUserID(rs.getLong("User_ID_Users"));
+        auction.setStartingBid(rs.getDouble("Starting_Bid"));
+        auction.setExpirationDate(rs.getTimestamp("Expiration_date"));
+        auction.setCurrentHighestBid(rs.getDouble("Current_Highest_Bid"));
+        return auction;
+    };
 
+
+    public Optional<Auction> findById(Long id) {
+
+        String sql = "Select * from auctions where \"Auction_ID\" = ?";
+
+        try {
+            Auction auction = jdbcTemplate.queryForObject(sql,AuctionRowMapper,id);
+            return Optional.of(auction);
+        } catch (EmptyResultDataAccessException e) {
+
+            return Optional.empty();
+        }
+    }
 }

@@ -1,4 +1,4 @@
-package com.auction.app.dao;
+package com.auction.app.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

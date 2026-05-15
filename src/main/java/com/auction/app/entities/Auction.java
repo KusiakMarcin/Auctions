@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Auction {
-        private Long ID;
+        private Long auctionID;
         private String Title;
         private Long PaymentID;
         private Long UserID;

@@ -46,7 +46,7 @@ public class UserRepository
             User user = jdbcTemplate.queryForObject(sql, userRowMapper, email);
             return Optional.ofNullable(user);
         } catch (EmptyResultDataAccessException e) {
-            // JdbcTemplate throws an exception if 0 rows are found
+
             return Optional.empty();
         }
     }
