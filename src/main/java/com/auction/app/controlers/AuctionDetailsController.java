@@ -36,7 +36,7 @@ public class AuctionDetailsController {
         //Determine highest bid (if no bids, use starting price)
         Double highestBid = bidHistory.isEmpty()
                 ? auction.getStartingBid()
-                : bidHistory.get(0).getBidValue();
+                : bidHistory.get(0).getBidValue(); 
 
         model.addAttribute("auction", auction);
         model.addAttribute("bidHistory", bidHistory);

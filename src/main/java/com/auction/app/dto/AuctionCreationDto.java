@@ -17,4 +17,5 @@ public class AuctionCreationDto {
     private Double StartingBid;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime ExpirationDate;
+    private String category;
 }

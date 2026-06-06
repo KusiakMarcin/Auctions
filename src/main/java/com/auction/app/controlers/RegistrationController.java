@@ -3,13 +3,24 @@ package com.auction.app.controlers;
 
 import com.auction.app.entities.User;
 import com.auction.app.repositories.UserRepository;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import com.auction.app.dto.UserRegistrationDto;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 
 @Controller
@@ -33,7 +44,8 @@ public class RegistrationController {
     }
 
     @PostMapping("/register")
-    public String processRegister(@ModelAttribute("userDto") UserRegistrationDto dto) {
+    public String processRegister(@ModelAttribute("userDto") UserRegistrationDto dto ,
+                                  HttpServletRequest request) {
 
 
 
@@ -51,6 +63,17 @@ public class RegistrationController {
 
         userRepository.save(newUser);
 
-        return "redirect:/login?registered=true";
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                newUser.getEmail(),
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        HttpSession session = request.getSession(true);
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                SecurityContextHolder.getContext());
+
+        return "redirect:/profile";
     }
 }

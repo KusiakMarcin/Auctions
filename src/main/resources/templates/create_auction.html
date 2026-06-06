@@ -34,11 +34,24 @@
                      class="form-control" required>
               <div class="form-text">When should the bidding end?</div>
             </div>
+            <div class="mb-3">
+              <label for="category" class="form-label">Category</label>
+              <select th:field="*{category}" class="form-select" id="category" required>
+                <option value="" disabled selected>Select a category...</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Cars">Cars</option>
+                <option value="Audio & Video">Audio & Video</option>
+                <option value="Collectibles">Collectibles</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Tools">Tools</option>
+              </select>
+            </div>
 
             <div class="d-grid gap-2">
               <button type="submit" class="btn btn-success">Post Auction</button>
               <a th:href="@{/auctions}" class="btn btn-outline-secondary">Cancel</a>
             </div>
+
           </form>
         </div>
       </div>

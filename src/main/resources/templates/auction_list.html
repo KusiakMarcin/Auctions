@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Auctions - AuctionHouse</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<!-- Global Navigation Bar Context -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/auctions}"><i class="bi bi-gavel me-2 text-primary"></i>AuctionHouse</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav ms-auto gap-1">
+                <a class="nav-link active" th:href="@{/auctions}">Browse Items</a>
+                <a class="nav-link" th:href="@{/profile}"><i class="bi bi-person-circle me-1"></i>My Profile</a>
+                <div class="d-flex gap-2 ms-2 align-items-center">
+                    <a th:href="@{/login}" class="btn btn-sm btn-outline-light rounded-2 px-3">Login</a>
+                    <a th:href="@{/register}" class="btn btn-sm btn-primary rounded-2 px-3">Register</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container pb-5">
+
+    <!-- Title Page Area -->
+    <div class="mb-4">
+        <h2 class="fw-bold text-dark mb-1">Active Listings</h2>
+        <p class="text-muted small">Find unique items, place bids, or track marketplace values in real-time</p>
+    </div>
+
+    <!-- Filter Bar Card Wrapper -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body p-4">
+            <form th:action="@{/auctions}" method="get" class="row g-3 align-items-end">
+
+                <!-- Text Search -->
+                <div class="col-md-4">
+                    <label class="form-label text-secondary small fw-semibold">Search Keywords</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-search"></i></span>
+                        <input type="text" name="search" th:value="${selectedSearch}"
+                               class="form-control bg-light border-start-0 ps-0" placeholder="e.g., iPhone, BMW...">
+                    </div>
+                </div>
+
+                <!-- Category Selector Dropdown -->
+                <div class="col-md-3">
+                    <label class="form-label text-secondary small fw-semibold">Category</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-grid-3x3-gap"></i></span>
+                        <select name="category" class="form-select bg-light border-start-0 ps-0">
+                            <option value="">All Categories</option>
+                            <option value="Electronics" th:selected="${selectedCategory == 'Electronics'}">Electronics</option>
+                            <option value="Cars" th:selected="${selectedCategory == 'Cars'}">Cars</option>
+                            <option value="Audio & Video" th:selected="${selectedCategory == 'Audio & Video'}">Audio & Video</option>
+                            <option value="Collectibles" th:selected="${selectedCategory == 'Collectibles'}">Collectibles</option>
+                            <option value="Furniture" th:selected="${selectedCategory == 'Furniture'}">Furniture</option>
+                            <option value="Tools" th:selected="${selectedCategory == 'Tools'}">Tools</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Range Price Fields Wrapper -->
+                <div class="col-md-3">
+                    <label class="form-label text-secondary small fw-semibold">Price Range</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light text-muted border-end-0">$</span>
+                        <input type="number" step="0.01" name="minPrice" th:value="${selectedMinPrice}"
+                               class="form-control bg-light border-start-0 ps-2" placeholder="Min">
+                        <span class="input-group-text bg-transparent border-start-0 border-end-0">-</span>
+                        <input type="number" step="0.01" name="maxPrice" th:value="${selectedMaxPrice}"
+                               class="form-control bg-light ps-2" placeholder="Max">
+                    </div>
+                </div>
+
+                <!-- Submission CTA Controls Grid -->
+                <div class="col-md-2">
+                    <div class="row g-2">
+                        <div class="col-8">
+                            <button type="submit" class="btn btn-primary w-100 fw-semibold rounded-2 shadow-sm">Filter</button>
+                        </div>
+                        <div class="col-4">
+                            <a th:href="@{/auctions}" class="btn btn-outline-secondary w-100 rounded-2" title="Reset Filters">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Active Auction Product Deck Grid Layout -->
+    <div class="row row-cols-1 row-cols-md-2 col-lg-3 row-cols-lg-3 g-4">
+        <div class="col" th:each="auction : ${auctions}">
+            <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden position-relative">
+
+                <!-- Category Corner Badge Label -->
+                <span class="position-absolute top-0 end-0 mt-3 me-3 badge bg-dark bg-opacity-75 rounded-pill text-white tracking-wider px-2.5 py-1.5 font-monospace small"
+                      th:text="${auction.category}">Category</span>
+
+                <div class="card-body p-4 pt-5">
+                    <h5 class="card-title fw-bold text-dark mb-3 text-truncate" th:text="${auction.title}">Item Title</h5>
+
+                    <div class="bg-light rounded-3 p-3 mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted small">Starting Price</span>
+                            <span class="text-secondary fw-semibold small" th:text="${#numbers.formatCurrency(auction.startingBid)}">$0.00</span>
+                        </div>
+                        <hr class="my-2 border-dashed opacity-25">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-dark small fw-bold">Current Highest</span>
+                            <span class="text-success fw-bold fs-5" th:text="${#numbers.formatCurrency(auction.currentHighestBid)}">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-white border-top-0 p-4 pt-0">
+                    <!-- Target details dynamic path routing lookup string -->
+                    <a th:href="@{/auctions/{id}(id=${auction.auctionID})}" class="btn btn-outline-primary w-100 py-2 fw-semibold rounded-2">
+                        View Item Details <i class="bi bi-chevron-right small ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- No results fallback card indicator -->
+    <div th:if="${#lists.isEmpty(auctions)}" class="text-center py-5 mt-4">
+        <div class="d-inline-flex p-4 bg-white text-muted rounded-circle shadow-sm mb-3 border">
+            <i class="bi bi-search-heart display-6 text-secondary"></i>
+        </div>
+        <p class="lead text-muted mb-1">No auctions found matching your parameters.</p>
+        <p class="text-muted small mb-3">Try adjusting your keywords, selecting another category, or loosening price ranges.</p>
+        <a th:href="@{/auctions}" class="btn btn-primary rounded-pill px-4">Clear All Filters</a>
+    </div>
+</div>
+
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

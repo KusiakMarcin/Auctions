@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 public class Auction {
         private Long auctionID;
         private String Title;
+        private String category;
         private Long PaymentID;
         private Long UserID;
         private Double StartingBid;
