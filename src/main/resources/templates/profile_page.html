@@ -75,12 +75,15 @@
                 <div class="card-body px-4 pt-0">
                     <div class="list-group list-group-flush border-top">
                         <div th:each="auction : ${myAuctions}" class="list-group-item px-0 py-3 d-flex justify-content-between align-items-start">
+                            <a th:href="@{/auctions/{id}(id=${auction.auctionID})}" class="text-decoration-none text-reset">
                             <div>
+
                                 <h6 class="fw-bold mb-1 text-dark" th:text="${auction.title}">Auction Title</h6>
                                 <small class="text-muted">
-                                    Starting Price: <span class="fw-semibold" th:text="${#numbers.formatCurrency(auction.startingPrice)}">$0.00</span>
+                                    Starting Price: <span class="fw-semibold" th:text="${#numbers.formatCurrency(auction.startingBid)}">$0.00</span>
                                 </small>
                             </div>
+                            </a>
                             <span class="badge bg-light text-primary border rounded-pill">Active</span>
                         </div>
                     </div>

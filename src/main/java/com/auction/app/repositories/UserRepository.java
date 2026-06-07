@@ -9,7 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
 import com.auction.app.entities.User;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +49,10 @@ public class UserRepository
             return Optional.empty();
         }
     }
+    public void updateBalance(Long userId, Double newBalance) {
+        String sql = "UPDATE public.\"Users\" SET \"Saldo\" = ? WHERE \"User_ID\" = ?";
+        jdbcTemplate.update(sql, newBalance, userId);
+    }
 
     /**
      * Maps the SQL ResultSet to the User object.
@@ -71,5 +74,17 @@ public class UserRepository
         User user = findByEmail(auth.getName()).
                 orElseThrow(() -> new RuntimeException("User not found"));
         return user.getId();
+    }
+
+    public Optional<User> findById(Long currentUserId) {
+        String sql = "select * from \"Users\" where \"User_ID\" = ? ";
+
+        try {
+            User user = jdbcTemplate.queryForObject(sql, userRowMapper, currentUserId);
+            return Optional.ofNullable(user);
+        } catch (EmptyResultDataAccessException e) {
+
+            return Optional.empty();
+        }
     }
 }

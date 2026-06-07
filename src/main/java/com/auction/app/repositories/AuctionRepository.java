@@ -89,6 +89,11 @@ public class AuctionRepository
         return jdbcTemplate.query(sql, AuctionRowMapper, category);
     }
 
+    public List<Auction> findByOwner(Long ID) {
+        String sql = "SELECT * FROM public.Auctions WHERE \"User_ID_Users\" = ?";
+        return jdbcTemplate.query(sql, AuctionRowMapper, ID);
+    }
+
     public List<Auction> searchByTitle(String search) {
 
         String sql = "SELECT * FROM public.Auctions WHERE \"Title\" ILIKE ?";

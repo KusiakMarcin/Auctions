@@ -103,7 +103,7 @@
     </div>
 
     <!-- Active Auction Product Deck Grid Layout -->
-    <div class="row row-cols-1 row-cols-md-2 col-lg-3 row-cols-lg-3 g-4">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <div class="col" th:each="auction : ${auctions}">
             <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden position-relative">
 
@@ -122,7 +122,7 @@
                         <hr class="my-2 border-dashed opacity-25">
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="text-dark small fw-bold">Current Highest</span>
-                            <span class="text-success fw-bold fs-5" th:text="${#numbers.formatCurrency(auction.currentHighestBid)}">$0.00</span>
+                            <span class="text-success fw-bold fs-5" th:text="${#numbers.formatCurrency(auction.getCurrentHighestBid())}">$0.00</span>
                         </div>
                     </div>
                 </div>

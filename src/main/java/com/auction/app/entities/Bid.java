@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Bid {
+    Long bidID;
     Long userID;
     Double bidValue;
     Long auctionID;
+    private java.sql.Timestamp placedTimestamp;
 
 }

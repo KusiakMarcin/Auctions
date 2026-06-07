@@ -2,90 +2,194 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Auction Details</title>
-  <!-- 1. BOOTSTRAP CSS (Hides the modal and styles the page) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${auction.title} + ' - Details'">Auction Details</title>
+  <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 </head>
-<!-- Added 'container mt-4' so the page isn't pushed against the edge of the screen -->
-<body class="container mt-4">
+<body class="bg-light">
 
-<!-- Timer Card -->
-<div class="card mb-4 shadow-sm">
-  <div class="card-body text-center">
-    <h5>Time Remaining</h5>
-    <h2 id="countdown" class="text-danger">--:--:--</h2>
+<!-- Global Navigation Bar Context -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" th:href="@{/auctions}"><i class="bi bi-gavel me-2 text-primary"></i>AuctionHouse</a>
+    <div class="navbar-nav ms-auto">
+      <a class="nav-link" th:href="@{/auctions}">Browse Items</a>
+      <a class="nav-link" th:href="@{/profile}"><i class="bi bi-person-circle me-1"></i>My Profile</a>
+    </div>
   </div>
-</div>
+</nav>
 
-<div class="row">
-  <!-- Left Column -->
-  <div class="col-md-8">
-    <h1 th:text="${auction.title}">Item Name</h1>
-    <hr>
-    <h3>Current Highest Bid:
-      <span class="text-success" th:text="${#numbers.formatCurrency(highestBid)}">$0.00</span>
-    </h3>
-  </div> <!-- 2. FIXED: This closing div was missing! -->
+<div class="container pb-5">
 
-  <!-- Right Column -->
-  <div class="col-md-4">
-    <!-- Button to trigger modal -->
-    <button type="button" class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#bidModal">
-      Place a Bid
-    </button>
-
-    <h4>Bid History</h4>
-    <table class="table table-striped">
-      <thead>
-      <tr>
-        <th>Bid</th>
-      </tr>
-      </thead>
-      <tbody>
-      <!-- Make sure bid.userEmail and bid.amount match your Java fields! -->
-      <tr th:each="bid : ${bidHistory}">
-
-        <td th:text="${#numbers.formatCurrency(bid.bidValue)}">$100</td>
-      </tr>
-      <tr th:if="${bidHistory.isEmpty()}">
-        <td colspan="2" class="text-center text-muted">No bids yet. Be the first!</td>
-      </tr>
-      </tbody>
-    </table>
+  <!-- Back Button Link Navigation Hook -->
+  <div class="mb-3">
+    <a th:href="@{/auctions}" class="text-decoration-none text-muted small fw-semibold">
+      <i class="bi bi-arrow-left me-1"></i> Back to listings
+    </a>
   </div>
-</div>
 
-<!-- Modal -->
-<div class="modal fade" id="bidModal" tabindex="-1" aria-labelledby="bidModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="bidModalLabel">Confirm Your Bid</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <!-- 3. FIXED: Changed auction.auctionID to auction.id -->
-      <form th:action="@{/auctions/{id}/bid(id=${auction.auctionID})}" method="post">
-        <div class="modal-body">
-          <p>You are about to bid on: <strong th:text="${auction.title}">Item</strong></p>
-          <div class="mb-3">
-            <label for="bidAmount" class="form-label">Enter Bid Amount</label>
-            <div class="input-group">
-              <span class="input-group-text">$</span>
-              <input type="number" step="0.01" class="form-control" name="bidValue" id="bidAmount" required>
+  <div class="row g-4">
+
+    <!-- Left Section Column Container: Product Information View -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm rounded-3 p-4 h-100">
+
+        <!-- Category Tag Meta Badge -->
+        <div class="mb-2">
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill font-monospace tracking-wider text-uppercase small px-3 py-2"
+                          th:text="${auction.category}">Category</span>
+        </div>
+
+        <h1 class="fw-bold text-dark display-6 mb-3" th:text="${auction.title}">Item Name</h1>
+        <hr class="my-3 opacity-25">
+
+        <!-- Beautiful Details Feature Dashboard Container -->
+        <div class="bg-light rounded-3 p-4 mb-4">
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <span class="text-muted small d-block">Starting Base Bid Price</span>
+              <h4 class="text-secondary fw-bold mb-0 mt-1" th:text="${#numbers.formatCurrency(auction.startingBid)}">$0.00</h4>
             </div>
-            <small class="text-muted">Must be higher than <span th:text="${#numbers.formatCurrency(highestBid)}"></span></small>
+            <div class="col-sm-6 border-start border-2 ps-sm-4">
+              <span class="text-dark small fw-bold">Current Active Highest Bid</span>
+              <h2 class="text-success fw-extrabold mb-0 mt-1" th:text="${#numbers.formatCurrency(highestBid)}">$0.00</h2>
+            </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success">Confirm and Place Bid</button>
+
+        <!-- Placeholder Container Block -->
+        <div class="mt-2">
+          <h5 class="fw-bold text-dark mb-2">Item Description</h5>
+          <p class="text-muted small lh-lg">
+            This item has been authenticated and listed through the secure AuctionHouse verification flow. Track real-time marketplace value updates, view contextual bid verification logs via the panel on the right, or register a competitive bid immediately using the button dashboard module.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right Section Column Container: Actions & Bid Tracking History Ledger -->
+    <div class="col-lg-4">
+      <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${errorMessage}">Error Message text</span>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${successMessage}">Success Message text</span>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="row g-4">
+
+        <!-- Sub Module Block 1: Real-Time Live Status Countdown Timer Card -->
+        <div class="col-12">
+          <div class="card border-0 bg-dark text-white shadow-sm rounded-3 overflow-hidden text-center position-relative">
+            <div class="card-body p-4">
+              <small class="text-white text-opacity-50 uppercase tracking-wider fw-bold small d-block mb-1">Time Remaining</small>
+              <h2 id="countdown" class="fw-bold text-danger mb-0 font-monospace tracking-tight">--h --m --s</h2>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub Module Block 2: Bid Operations & History Ledger Table -->
+        <div class="col-12">
+          <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-body p-4">
+
+              <button type="button" class="btn btn-primary w-100 py-2.5 fw-bold rounded-3 shadow-sm mb-4" data-bs-toggle="modal" data-bs-target="#bidModal">
+                <i class="bi bi-plus-circle me-1"></i> Place a Competitive Bid
+              </button>
+
+              <h5 class="fw-bold text-dark mb-3"><i class="bi bi-history me-2 text-muted"></i>Bid History Activity Logs</h5>
+
+              <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                  <thead>
+                  <tr class="text-secondary small">
+                    <th class="border-bottom-0 ps-0">Bidder Name</th>
+                    <th class="border-bottom-0">Time Placed</th>
+                    <th class="border-bottom-0 text-end pe-0">Amount</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr th:each="bid : ${bidHistory}">
+                    <td class="ps-0 py-3">
+                      <div class="d-flex align-items-center">
+                        <div class="p-1 bg-light rounded-circle me-2 text-primary small" style="width: 28px; height: 28px; text-align: center; line-height: 20px;">
+                          <i class="bi bi-person small"></i>
+                        </div>
+                        <span class="fw-semibold text-dark small" th:text="${userData.get(bid.getUserID).getName()} + ' ' + ${userData.get(bid.getUserID).getLastName()}">John Doe</span>
+                      </div>
+                    </td>
+
+                    <td class="text-muted small" th:text="${#dates.format(bid.placedTimestamp, 'dd MMM yyyy, HH:mm')}">
+                      07 Jun 2026, 10:58
+                    </td>
+
+                    <td class="text-end text-success fw-bold pe-0" th:text="${#numbers.formatCurrency(bid.bidValue)}">
+                      $100.00
+                    </td>
+                  </tr>
+
+                  <tr th:if="${#lists.isEmpty(bidHistory)}">
+                    <td colspan="3" class="text-center py-5 text-muted small">
+                      <i class="bi bi-chat-square-quote d-block fs-3 mb-2 opacity-50"></i>
+                      No active offers yet. Be the first to start!
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Form Modification Transaction Confirmation Modal -->
+<div class="modal fade" id="bidModal" tabindex="-1" aria-labelledby="bidModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold text-dark" id="bidModalLabel"><i class="bi bi-shield-check text-primary me-2"></i>Confirm New Bid Entry</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form th:action="@{/auctions/{id}/bid(id=${auction.auctionID})}" method="post">
+        <div class="modal-body p-4">
+          <p class="text-muted small">You are initializing an official transaction offer profile value line submission on top of item target: <strong class="text-dark" th:text="${auction.title}">Item</strong></p>
+
+          <div class="mb-3">
+            <label for="bidAmount" class="form-label small fw-semibold text-secondary">Enter Bid Amount Target Value ($)</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 text-muted">$</span>
+              <input type="number" step="0.01" class="form-control bg-light border-start-0 ps-1 fw-bold text-dark" name="bidValue" id="bidAmount" placeholder="0.00" required>
+            </div>
+            <div class="form-text text-muted small mt-2">
+              <i class="bi bi-info-circle me-1"></i> Minimum verification tier requires values strictly higher than:
+              <span class="fw-bold text-success" th:text="${#numbers.formatCurrency(highestBid)}"></span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0 px-4 pb-4">
+          <button type="button" class="btn btn-light rounded-2 fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success rounded-2 px-4 fw-bold shadow-sm">Confirm and Place Bid</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
-<!-- Timer Script -->
+<!-- Real-Time Counter Live Updates Execution Engine Script -->
 <script th:inline="javascript">
   const endTime = [[${endTime}]];
 
@@ -95,6 +199,8 @@
 
       if (distance < 0) {
           document.getElementById("countdown").innerHTML = "EXPIRED";
+          document.getElementById("countdown").classList.remove("text-danger");
+          document.getElementById("countdown").classList.add("text-muted");
           return;
       }
 
@@ -109,7 +215,7 @@
   updateTimer();
 </script>
 
-<!-- 4. BOOTSTRAP JS (This makes the popup actually pop up when clicked) -->
+<!-- Bootstrap 5 JS Bundle Context Execution Dependency Hook -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
